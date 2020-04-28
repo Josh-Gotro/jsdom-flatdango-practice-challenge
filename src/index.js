@@ -1,8 +1,5 @@
 // GLOBAL
 const url = "http://localhost:3000/films"
-const filmsDiv = () => document.querySelector("#films")
-const posterDiv = () => document.querySelector("#poster")
-const showingDiv = () => document.querySelector("#showing")
 let poster = document.getElementsByClassName("four wide column")[1];
 let info = document.getElementsByClassName("four wide column")[2];
 let allFilms;
@@ -13,6 +10,7 @@ let currentFilm;
 
 //  DOM LISTENER
 document.addEventListener("DOMContentLoaded", (event) => {
+    event.preventDefault();
     fetchFilms();
     // fetchPost();
     buyTicket();
@@ -24,16 +22,16 @@ function fetchFilms(){
     fetch(url).then(r => r.json()).then(films => filmPoster(films))
 };
 
-function fetchPatch(obj){
+function fetchPatch(tixSold){
     currentUrl = `${url}/${allFilms[0].id}`
-    console.log(obj)
+    console.log(tixSold)
     fetch( currentUrl, {
         method: 'PATCH',
         headers: {
             'Content-Type': 'application/json',
             'Accept': 'application/json'
         },
-        body: JSON.stringify({tickets_sold: obj})
+        body: JSON.stringify({tickets_sold: tixSold})
     })
 };
 
@@ -75,11 +73,12 @@ function movieInfo() {
 function buyTicket() {
     showCard = document.getElementById("showing")
     showCard.addEventListener('click', (e)=> {
+        e.preventDefault();
         let desc = parseInt(showCard.querySelectorAll('span')[1].innerText)
         if (desc > 0) {
             allFilms[0].tickets_sold = allFilms[0].tickets_sold + 1
-            let pl = allFilms[0].tickets_sold
-           fetchPatch(pl)
-           movieInfo()
+            let adjTicketsSold = allFilms[0].tickets_sold
+            movieInfo()
+           fetchPatch(adjTicketsSold)
         };
     })};
